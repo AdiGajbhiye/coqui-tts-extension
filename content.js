@@ -4,7 +4,11 @@ function* textGenerator() {
   );
   for (let i = 0; i < focusableElements.length; i++) {
     const element = focusableElements[i];
+    const prevBg = element.style.backgroundColor;
+    element.style.backgroundColor = "yellow";
+    element.scrollIntoView({ behavior: "smooth", block: "center" });
     yield element.textContent.trim();
+    element.style.backgroundColor = prevBg;
   }
 }
 
