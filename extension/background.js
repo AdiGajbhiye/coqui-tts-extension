@@ -1,14 +1,24 @@
 chrome.browserAction.onClicked.addListener((tab) => {
-  chrome.tabs.sendMessage(tab.id, { command: "getText" }, (response) => {
-    if (response) {
-      const { value: textToRead, done } = response;
-      if (!done) {
-        console.log(textToRead);
-        const audio = new Audio();
-        audio.src =
-          "http://localhost:8000/?q=" + encodeURIComponent(textToRead);
-        audio.play();
-      }
-    }
-  });
+  function handleGetText(response) {
+    if (!response) return;
+    const { value: textToRead, done } = response;
+    if (done) return;
+    console.log(textToRead);
+    const audio = new Audio(
+      "http://localhost:8000/?q=" + encodeURIComponent(textToRead)
+    );
+    audio.addEventListener("canplaythrough", () => {
+      audio.play();
+    });
+
+    audio.addEventListener("ended", () => {
+      sendGetTextMessage();
+    });
+  }
+
+  function sendGetTextMessage() {
+    chrome.tabs.sendMessage(tab.id, { command: "getText" }, handleGetText);
+  }
+
+  sendGetTextMessage();
 });
