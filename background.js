@@ -4,7 +4,10 @@ chrome.browserAction.onClicked.addListener((tab) => {
       const { value: textToRead, done } = response;
       if (!done) {
         console.log(textToRead);
-        chrome.tts.speak(textToRead);
+        const audio = new Audio();
+        audio.src =
+          "http://localhost:8000/?q=" + encodeURIComponent(textToRead);
+        audio.play();
       }
     }
   });
