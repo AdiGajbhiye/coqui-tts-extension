@@ -38,6 +38,7 @@ chrome.browserAction.onClicked.addListener((tab) => {
     if (index >= textContents.length) return;
     next(index);
     audioQueue[0].start();
+    if (index + BUFFER_LEN >= textContents.length) return;
     audioQueue.push(
       new AudioHandler(textContents[index + BUFFER_LEN], onEnd, false)
     );
