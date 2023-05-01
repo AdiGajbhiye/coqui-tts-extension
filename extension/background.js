@@ -34,9 +34,13 @@ let BUFFER_LEN = 10;
 chrome.browserAction.onClicked.addListener((tab) => {
   function onEnd(prevIndex) {
     const index = prevIndex + 1;
+    audioQueue.shift();
     if (index >= textContents.length) return;
     next(index);
-    audioQueue[index].start();
+    audioQueue[0].start();
+    audioQueue.push(
+      new AudioHandler(textContents[index + BUFFER_LEN], onEnd, false)
+    );
   }
 
   function init() {
