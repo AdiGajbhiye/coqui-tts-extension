@@ -28,7 +28,6 @@ function highlightText(i) {
 }
 
 const getResult = ({ command, args }) => {
-  console.log(command, args);
   if (command === "next") return processElement(args.i);
   if (command === "init") return init();
 };

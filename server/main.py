@@ -13,7 +13,7 @@ tts = TTS(model_name)
 
 
 def get_random_wav_file():
-    return "/tmp/{0}.wav".format(str(round(time.time())))
+    return "/tmp/{0}.wav".format(str(round(time.time() * 1000)))
 
 
 class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
