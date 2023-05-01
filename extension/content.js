@@ -1,21 +1,38 @@
-function* textGenerator() {
-  const focusableElements = document.querySelectorAll(
-    "[data-selectable-paragraph]"
-  );
+let focusableElements;
+let prevBg = "transparent";
+
+function init() {
+  focusableElements = document.querySelectorAll("[data-selectable-paragraph]");
+  const buffer = [];
   for (let i = 0; i < focusableElements.length; i++) {
-    const element = focusableElements[i];
-    const prevBg = element.style.backgroundColor;
-    element.style.backgroundColor = "yellow";
-    element.scrollIntoView({ behavior: "smooth", block: "center" });
-    yield element.textContent.trim();
-    element.style.backgroundColor = prevBg;
+    buffer.push({
+      id: i,
+      textContent: focusableElements[i].textContent.trim(),
+    });
   }
+
+  highlightText(0);
+  return buffer;
 }
 
-const gen = textGenerator();
+function processElement(i) {
+  focusableElements[i - 1].style.backgroundColor = prevBg;
+  highlightText(i);
+}
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.command === "getText") {
-    sendResponse(gen.next());
-  }
-});
+function highlightText(i) {
+  const element = focusableElements[i];
+  prevbg = element.style.backgroundColor;
+  element.style.backgroundColor = "yellow";
+  element.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+const getResult = ({ command, args }) => {
+  console.log(command, args);
+  if (command === "next") return processElement(args.i);
+  if (command === "init") return init();
+};
+
+chrome.runtime.onMessage.addListener((message, _, sendResponse) =>
+  sendResponse(getResult(message))
+);
